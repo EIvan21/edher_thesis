@@ -63,6 +63,11 @@ view: transactions {
     sql: ${TABLE}.product_code ;;
   }
 
+  # dimension: prod_market_code {
+  #   type: string
+  #   sql: CONCAT(${product_code},${market_code}) ;;
+  # }
+
   dimension: sales_amount {
     type: number
     sql: ${TABLE}.sales_amount ;;
@@ -119,6 +124,7 @@ view: transactions {
   measure: test_liquid {
     type: sum
     sql: ${sales_amount} ;;
+
     # filters: [order_date: "this month"]
     value_format_name: decimal_0
     link: {
