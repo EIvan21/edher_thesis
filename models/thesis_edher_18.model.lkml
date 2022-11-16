@@ -33,4 +33,25 @@ explore: markets {}
 
 explore: products {}
 
-explore: transactions {}
+explore: transactions {
+  join: customers {
+    type: left_outer
+    sql_on: ${transactions.customer_code} = ${customers.customer_code} ;;
+    relationship: many_to_one
+  }
+
+  join: markets {
+    type: left_outer
+    sql_on: ${markets.markets_code} = ${transactions.market_code} ;;
+    relationship: many_to_one
+  }
+
+  join: products {
+    type: left_outer
+    sql_on: ${products.product_code} = ${transactions.product_code} ;;
+    relationship: many_to_one
+  }
+
+}
+
+explore: pdt_week {}
