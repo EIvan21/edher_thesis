@@ -1,5 +1,6 @@
 # The name of this view in Looker is "Transactions"
 # include: "Tests.view"
+include: "products.view"
 view: transactions {
   # extends: [tests]
   # The sql_table_name parameter indicates the underlying database table
@@ -51,7 +52,9 @@ view: transactions {
       week,
       month,
       quarter,
-      year
+      year,
+      fiscal_year,
+      fiscal_month_num
     ]
     convert_tz: no
     datatype: date
@@ -63,10 +66,19 @@ view: transactions {
     sql: ${TABLE}.product_code ;;
   }
 
-  # dimension: prod_market_code {
-  #   type: string
-  #   sql: CONCAT(${product_code},${market_code}) ;;
-  # }
+  filter: prod_code {
+    type: string
+    suggest_dimension: product_code_from_other_view
+    sql: {% condition prod_code %} ${product_code} {% endcondition %} ;;
+  }
+
+  dimension: product_code_from_other_view{
+    sql: ${products.product_code} ;;
+  }
+  dimension: prod_market_code {
+    type: string
+    sql: CONCAT(${product_code},${market_code}) ;;
+  }
 
   dimension: sales_amount {
     type: number
@@ -171,6 +183,8 @@ view: transactions {
 
 
 
+
+
   # Parameters
   # parameter: sales_amount_less_10000 {
   #   type: unquoted
@@ -202,14 +216,12 @@ view: transactions {
   measure: count_distinct_test {
     type: count_distinct
     sql: ${product_code} ;;
-    filters: [
-      sales_more_than_20000: "yes"
-    ]
+
   }
 
   measure: count_distinct_prods {
     type: count_distinct
-    sql: ${product_code} ;;
+    sql: NULL ;;
   }
 
   measure: percent_prods_20000 {
@@ -217,5 +229,34 @@ view: transactions {
     sql: ${count_distinct_test}/NULLIF(${count_distinct_prods},0) ;;
     value_format: "0.00%"
   }
+
+  #Alankrita
+  dimension: month_start {
+    type: date_fiscal_month_num
+    sql: CURRENT_TIMESTAMP() ;;
+  }
+
+  # dimension: YDT {
+  #   type: date_fiscal_month_num
+  #   sql: {} ;;
+  # }
+
+  dimension_group: interval {
+    type: duration
+    sql_start: ${order_date};;
+    sql_end: CURRENT_TIMESTAMP() ;;
+  }
+
+  # dimension: date_year_start {
+  #   type: date
+  #   sql: ${year_sart} ;;
+  # }
+
+  # dimension_group: YDT {
+  #   type: duration
+  #   sql_start:  ;;
+  # }
+
+
 
 }

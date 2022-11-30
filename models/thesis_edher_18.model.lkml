@@ -52,6 +52,9 @@ explore: transactions {
     relationship: many_to_one
   }
 
+
 }
 
 explore: pdt_week {}
+
+explore: productcode {}

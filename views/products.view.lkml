@@ -21,6 +21,11 @@ view: products {
     sql: ${TABLE}.product_type ;;
   }
 
+  dimension: product_type_2 {
+    type: string
+    sql: ${TABLE}.product_type ;;
+  }
+
   measure: count {
     type: count
     drill_fields: []
